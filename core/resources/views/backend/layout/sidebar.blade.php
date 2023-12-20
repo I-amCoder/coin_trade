@@ -42,7 +42,7 @@
                 <li class="nav-item dropdown {{ menuActive('admin.plan*') }}">
                     <a href="{{ route('admin.plan.index') }}" class="nav-link ">
                         <i data-feather="box"></i>
-                        <span>{{ __('Manage Plan') }}</span>
+                        <span>{{ __('Coins') }}</span>
                     </a>
                 </li>
             @endif
@@ -51,7 +51,7 @@
                 <li class="nav-item dropdown {{ menuActive('admin.time*') }}">
                     <a href="{{ route('admin.time.index') }}" class="nav-link ">
                         <i data-feather="calendar"></i>
-                        <span>{{ __('Schedule') }}</span>
+                        <span>{{ __('Coin Prices') }}</span>
                     </a>
                 </li>
             @endif
@@ -314,7 +314,7 @@
                 </li>
             @endif
 
-          
+
 
 
             @if (auth()->guard('admin')->user()->can('manage-setting'))
@@ -379,7 +379,7 @@
             @endif
 
             @if (auth()->guard('admin')->user()->can('manage-theme'))
-                
+
 
             <li class="nav-item dropdown {{ menuActive('admin.manage.theme*') }}">
                 <a href="{{ route('admin.manage.theme') }}" class="nav-link ">
@@ -485,8 +485,8 @@
                     <span>{{ __('Update System') }}</span>
                 </a>
             </li>
-            
-            
+
+
             <li class="sidebar-menu-caption">{{ __('Current Version') }} {{ $general->current_version }}</li>
 
         </ul>

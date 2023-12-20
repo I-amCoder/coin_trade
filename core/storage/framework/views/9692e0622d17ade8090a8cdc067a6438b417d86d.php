@@ -42,7 +42,7 @@
                 <li class="nav-item dropdown <?php echo e(menuActive('admin.plan*')); ?>">
                     <a href="<?php echo e(route('admin.plan.index')); ?>" class="nav-link ">
                         <i data-feather="box"></i>
-                        <span><?php echo e(__('Manage Plan')); ?></span>
+                        <span><?php echo e(__('Coins')); ?></span>
                     </a>
                 </li>
             <?php endif; ?>
@@ -51,7 +51,7 @@
                 <li class="nav-item dropdown <?php echo e(menuActive('admin.time*')); ?>">
                     <a href="<?php echo e(route('admin.time.index')); ?>" class="nav-link ">
                         <i data-feather="calendar"></i>
-                        <span><?php echo e(__('Schedule')); ?></span>
+                        <span><?php echo e(__('Coin Prices')); ?></span>
                     </a>
                 </li>
             <?php endif; ?>
@@ -314,7 +314,7 @@
                 </li>
             <?php endif; ?>
 
-          
+
 
 
             <?php if(auth()->guard('admin')->user()->can('manage-setting')): ?>
@@ -379,7 +379,7 @@
             <?php endif; ?>
 
             <?php if(auth()->guard('admin')->user()->can('manage-theme')): ?>
-                
+
 
             <li class="nav-item dropdown <?php echo e(menuActive('admin.manage.theme*')); ?>">
                 <a href="<?php echo e(route('admin.manage.theme')); ?>" class="nav-link ">
@@ -485,8 +485,8 @@
                     <span><?php echo e(__('Update System')); ?></span>
                 </a>
             </li>
-            
-            
+
+
             <li class="sidebar-menu-caption"><?php echo e(__('Current Version')); ?> <?php echo e($general->current_version); ?></li>
 
         </ul>
