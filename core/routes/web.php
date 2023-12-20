@@ -23,6 +23,7 @@ use App\Http\Controllers\PaymentController as ControllersPaymentController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdvertiseController;
+use App\Http\Controllers\Admin\CoinsController;
 use App\Http\Controllers\Admin\DynamicGatewayController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
@@ -96,15 +97,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('ticket', AdminTicketController::class);
         });
 
-        Route::middleware('permission:manage-plan,admin')->group(function(){
+        Route::middleware('permission:manage-plan,admin')->group(function () {
             Route::resource('plan', PlanController::class)->middleware('permission:manage-plan,admin');
             Route::post('plan/changestatus/{id}', [PlanController::class, 'planStatusChange'])->name('plan.changestatus');
+        });
+
+        Route::middleware('permission:manage-plan,admin')->group(function () {
+            Route::resource('coins', CoinsController::class)->except(['show','destroy']);
         });
 
 
         Route::resource('time', TimeManageController::class)->middleware('permission:manage-schedule,admin');
 
-        Route::middleware('permission:manage-referral,admin')->group(function(){
+        Route::middleware('permission:manage-referral,admin')->group(function () {
             Route::resource('referral', ReferralController::class);
             Route::post('invest/referral', [ReferralController::class, 'investStore'])->name('invest.store');
             Route::post('interest/referral', [ReferralController::class, 'interestStore'])->name('interest.store');
@@ -174,12 +179,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('user/{status}', [ManageUserController::class, 'userStatusWiseFilter'])->name('user.filter');
             Route::get('login/user/{id}', [ManageUserController::class, 'loginAsUser'])->name('login.user');
 
-            Route::get('users/kyc', [ManageUserController::class , 'kyc'])->name('user.kyc');
-            Route::post('users/kyc', [ManageUserController::class , 'kycUpdate']);
+            Route::get('users/kyc', [ManageUserController::class, 'kyc'])->name('user.kyc');
+            Route::post('users/kyc', [ManageUserController::class, 'kycUpdate']);
 
-            Route::get('user/kyc/request',[ManageUserController::class ,'kycAll'])->name('user.kyc.req');
-            Route::get('user/kyc/request/{id}',[ManageUserController::class ,'kycDetails'])->name('user.kyc.details');
-            Route::post('user/kyc/{status}/{id}',[ManageUserController::class ,'kycStatus'])->name('user.kyc.status');
+            Route::get('user/kyc/request', [ManageUserController::class, 'kycAll'])->name('user.kyc.req');
+            Route::get('user/kyc/request/{id}', [ManageUserController::class, 'kycDetails'])->name('user.kyc.details');
+            Route::post('user/kyc/{status}/{id}', [ManageUserController::class, 'kycStatus'])->name('user.kyc.status');
         });
 
         Route::middleware('permission:manage-withdraw,admin')->group(function () {
@@ -265,7 +270,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('withdarw-report/{user?}', [ReportController::class, 'withdarawReport'])->name('withdraw.report');
 
             Route::get('money/transfer/log', [HomeController::class, 'MoneyTransfer'])->name('money.log');
-
         });
 
         Route::middleware('permission:Manual-payments,admin')->group(function () {
@@ -280,16 +284,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('subscribers', [HomeController::class, 'subscribers'])->name('subscribers')->middleware('permission:manage-subscriber,admin');
 
 
-      
+
 
         Route::get('changeLang', [LanguageController::class, 'changeLang'])->name('changeLang');
         Route::get('/mark-as-read', [HomeController::class, 'markNotification'])->name('markNotification');
         Route::get('/deposit/mark-as-read', [HomeController::class, 'markDepositNotification'])->name('deposit.markNotification');
 
-        Route::get('update/system', [HomeController::class,'updateSystem'])->name('update.system');
+        Route::get('update/system', [HomeController::class, 'updateSystem'])->name('update.system');
 
-        Route::get('update/database', [HomeController::class,'updateDb'])->name('update-database');
-        
+        Route::get('update/database', [HomeController::class, 'updateDb'])->name('update-database');
     });
 });
 
@@ -340,7 +343,7 @@ Route::name('user.')->group(function () {
         Route::post('kyc', [UserController::class, 'kycUpdate']);
 
 
-        Route::middleware('2fa','kyc')->group(function () {
+        Route::middleware('2fa', 'kyc')->group(function () {
 
             Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
 
@@ -372,10 +375,10 @@ Route::name('user.')->group(function () {
             Route::get('investmentplan', [SiteController::class, 'investmentPlan'])->name('investmentplan');
 
 
-            Route::post('plan/remove/{id}',[UserController::class,'planRemove'])->name('plan.delete');
+            Route::post('plan/remove/{id}', [UserController::class, 'planRemove'])->name('plan.delete');
 
 
-            
+
             Route::post('investmentplan/invest', [SiteController::class, 'investmentUsingBalannce'])->name('investmentplan.submit');
 
             Route::get('gateways/{id}', [ControllersPaymentController::class, 'gateways'])->name('gateways');
@@ -439,7 +442,6 @@ Route::name('user.')->group(function () {
             Route::get('money/transfer/log', [SiteController::class, 'MoneyTransfer'])->name('money.log');
 
             Route::get('view/all/btn', [SiteController::class, 'viewall'])->name('viewall');
-           
         });
     });
 });

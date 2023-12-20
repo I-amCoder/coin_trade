@@ -39,22 +39,22 @@
             <li class="sidebar-menu-caption">{{ __('Manage Plan') }}</li>
 
             @if (auth()->guard('admin')->user()->can('manage-plan'))
-                <li class="nav-item dropdown {{ menuActive('admin.plan*') }}">
-                    <a href="{{ route('admin.plan.index') }}" class="nav-link ">
+                <li class="nav-item dropdown {{ menuActive('admin.coins*') }}">
+                    <a href="{{ route('admin.coins.index') }}" class="nav-link ">
                         <i data-feather="box"></i>
                         <span>{{ __('Coins') }}</span>
                     </a>
                 </li>
             @endif
 
-            @if (auth()->guard('admin')->user()->can('manage-schedule'))
-                <li class="nav-item dropdown {{ menuActive('admin.time*') }}">
+            {{-- @if (auth()->guard('admin')->user()->can('manage-schedule'))
+                <li class="nav-item dropdown {{ menuActive('admin.plan*') }}">
                     <a href="{{ route('admin.time.index') }}" class="nav-link ">
                         <i data-feather="calendar"></i>
                         <span>{{ __('Coin Prices') }}</span>
                     </a>
                 </li>
-            @endif
+            @endif --}}
 
 
             <li class="sidebar-menu-caption">{{ __('User Management') }}</li>
