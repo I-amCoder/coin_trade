@@ -1,3 +1,11 @@
+<?php $__env->startPush('script'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"
+        integrity="sha512-PEsccDx9jqX6Dh4wZDCnWMaIO3gAaU0j46W//sSqQhUQxky6/eHZyeB3NrXD2xsyugAKd4KPiDANkcuoEa2JuA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+<?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
     <div class="main-content">
         <section class="section">
@@ -14,6 +22,9 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="col-12">
+                                        <?php echo $__env->make('common.chart', ['coin' => $coin], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    </div>
                                     <div class="col-md-6">
                                         <form action="<?php echo e(route('admin.coins.bounderies.update', $coin->id)); ?>"
                                             method="POST">
@@ -84,6 +95,10 @@ unset($__errorArgs, $__bag); ?>
                                     <div class="col-md-6">
                                         <form action="<?php echo e(route('admin.coins.price.update', $coin->id)); ?>" method="POST">
                                             <?php echo csrf_field(); ?>
+                                            <h5>Current Coin Price <span
+                                                    id="coin_price_<?php echo e($coin->id); ?>"><?php echo e($coin->current_price); ?></span><?php echo e(@$general->site_currency); ?>
+
+                                            </h5>
                                             <div class="form-group">
                                                 <label for="" class="form-label">Coin Current Price</label>
                                                 <div class="input-group">
@@ -114,9 +129,10 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                                             </div>
-                                            <button type="submit"class="btn btn-info">Update</button>
+                                            <button type="submit"class="btn btn-warning">Update</button>
                                         </form>
                                     </div>
+
                                 </div>
                                 <hr>
                             </div>
@@ -124,8 +140,14 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
+
         </section>
     </div>
 <?php $__env->stopSection(); ?>
+
+
+<?php $__env->startPush('script'); ?>
+    <?php echo $__env->make('backend.coins.script', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('backend.layout.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Junaid Ali\Desktop\www\wahab\resources\views/backend/coins/stats.blade.php ENDPATH**/ ?>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Coin;
 use App\Models\PriceHistory;
 use Illuminate\Http\Request;
+use Pusher\Pusher;
 
 class CoinsController extends Controller
 {
@@ -23,6 +24,40 @@ class CoinsController extends Controller
         return view('backend.coins.stats', compact('pageTitle', 'coins'));
     }
 
+    public function updatePrice(Request $request, $id)
+    {
+        $coin  = Coin::findOrFail($id);
+        $request->validate([
+            'price_' . $id => 'required',
+        ], [], [
+            'price_' . $id => "Price"
+        ]);
+
+        $history = new PriceHistory();
+
+        $history->prev_price = $coin->current_price;
+        $history->current_price = $request->input('price_' . $id);
+        $history->coin_id = $coin->id;
+
+        $coin->current_price = $request->input('price_' . $id);
+        $coin->save();
+        $history->save();
+
+        $data['coin_id'] = $coin->id;
+        $data['coin_name'] = $coin->name;
+        $data['label'] = $history->created_at->format('H:i');
+        $data['price'] = $history->current_price;
+
+
+        $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), [
+            'cluster' => env('PUSHER_APP_CLUSTER'),
+            'useTLS' => true,
+        ]);
+        $pusher->trigger('price-channel-local', 'price-updated', $data);
+
+        return back()->withSuccess("Coin Price Updated Successfully");
+    }
+
     public function updateBounderies(Request $request, $id)
     {
         $coin = Coin::findOrFail($id);
@@ -30,6 +65,9 @@ class CoinsController extends Controller
         $request->validate([
             'minimum_price_' . $id => 'required|numeric',
             'maximum_price_' . $id => 'required|numeric',
+        ], [], [
+            'minimum_price_' . $id => 'Minimum Price',
+            'maximum_price_' . $id => 'Maximum Price',
         ]);
 
         if ($request->input('minimum_price_' . $id) > $request->input('maximum_price_' . $id)) {

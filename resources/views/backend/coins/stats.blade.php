@@ -1,4 +1,12 @@
 @extends('backend.layout.master')
+@push('script')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"
+        integrity="sha512-PEsccDx9jqX6Dh4wZDCnWMaIO3gAaU0j46W//sSqQhUQxky6/eHZyeB3NrXD2xsyugAKd4KPiDANkcuoEa2JuA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+@endpush
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -15,6 +23,9 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="col-12">
+                                        @include('common.chart', ['coin' => $coin])
+                                    </div>
                                     <div class="col-md-6">
                                         <form action="{{ route('admin.coins.bounderies.update', $coin->id) }}"
                                             method="POST">
@@ -57,6 +68,9 @@
                                     <div class="col-md-6">
                                         <form action="{{ route('admin.coins.price.update', $coin->id) }}" method="POST">
                                             @csrf
+                                            <h5>Current Coin Price <span
+                                                    id="coin_price_{{ $coin->id }}">{{ $coin->current_price }}</span>{{ @$general->site_currency }}
+                                            </h5>
                                             <div class="form-group">
                                                 <label for="" class="form-label">Coin Current Price</label>
                                                 <div class="input-group">
@@ -73,9 +87,10 @@
                                                     <p class="text-danger">{{ $message }}</p>
                                                 @enderror
                                             </div>
-                                            <button type="submit"class="btn btn-info">Update</button>
+                                            <button type="submit"class="btn btn-warning">Update</button>
                                         </form>
                                     </div>
+
                                 </div>
                                 <hr>
                             </div>
@@ -83,6 +98,12 @@
                     </div>
                 @endforeach
             </div>
+
         </section>
     </div>
 @endsection
+
+
+@push('script')
+    @include('backend.coins.script')
+@endpush
