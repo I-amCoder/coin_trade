@@ -14,12 +14,10 @@
             background: #30E8BF;
             background: -webkit-linear-gradient(to right, #FF8235, #30E8BF);
             background: linear-gradient(to right, #FF8235, #30E8BF);
-
             color: white !important;
             border-radius: 5px;
             border: none;
         }
-
         .nav-tabs .nav-link {
             background-color: #f8f9fa;
             color: #000;
@@ -132,7 +130,7 @@ unset($__errorArgs, $__bag); ?>
                                                     <button type="submit"class="btn btn-info">Update</button>
                                                 </form>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 h-100">
                                                 <form action="<?php echo e(route('admin.coins.price.update', $coin->id)); ?>"
                                                     method="POST">
                                                     <?php echo csrf_field(); ?>
@@ -171,7 +169,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                                                     </div>
-                                                    <button type="submit"class="btn btn-warning">Update</button>
+                                                    <button type="submit"class="btn btn-warning mt-100">Update</button>
                                                 </form>
                                             </div>
 

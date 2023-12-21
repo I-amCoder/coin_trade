@@ -22,7 +22,7 @@
             text-align: center;
         }
     </style>
-    <h2>{{ $coin->name }} Graph</h2>
+    <h4>{{ $coin->name }} Graph</h2>
     <div class="container-fluid">
         <div class="chart-container">
             <canvas id="stockChart{{ $coin->id }}"></canvas>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Coin;
 use App\Models\Deposit;
 use App\Models\Transaction;
 use App\Models\Withdraw;
@@ -18,8 +19,9 @@ use App\Models\UserRanking;
 use Illuminate\Http\Request;
 use Nette\Utils\Random;
 use Purifier;
-use Auth;
+
 use Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -48,8 +50,9 @@ class UserController extends Controller
         $pendingInvest = Payment::where('user_id', Auth::id())->where('payment_status', 2)->sum('amount');
         $pendingWithdraw = Withdraw::where('user_id', Auth::id())->where('status', 0)->sum('withdraw_amount');
         $totalDeposit = Deposit::where('user_id', Auth::id())->where('payment_status', 1)->sum('final_amount');
+        $coins = Coin::latest()->take(2)->get();
 
-        return view($this->template . 'user.dashboard', compact('commison', 'pageTitle', 'interestLogs', 'totalInvest', 'currentInvest', 'currentPlan', 'allPlan', 'withdraw', 'pendingInvest', 'pendingWithdraw', 'totalDeposit'));
+        return view($this->template . 'user.dashboard', compact('commison', 'pageTitle', 'interestLogs', 'totalInvest', 'currentInvest', 'currentPlan', 'allPlan', 'withdraw', 'pendingInvest', 'pendingWithdraw', 'totalDeposit','coins'));
     }
 
     public function profile()
@@ -64,7 +67,7 @@ class UserController extends Controller
     public function profileUpdate(Request $request)
     {
 
-    
+
 
         $request->validate([
             'fname' => 'required',

@@ -1,12 +1,20 @@
 @extends(template() . 'layout.master2')
 
+@push('script')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"
+        integrity="sha512-PEsccDx9jqX6Dh4wZDCnWMaIO3gAaU0j46W//sSqQhUQxky6/eHZyeB3NrXD2xsyugAKd4KPiDANkcuoEa2JuA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+@endpush
 @section('content2')
     <div class="dashboard-body-part">
 
         <div class="button-container">
-            <button id="button1" onclick="showDiv(1)" class="active">Exchange </button>
+            <button id="button1" onclick="showDiv(1)" class="active p-2">Exchange </button>
 
-            <button id="button2" onclick="showDiv(2)"> Wallet </button>
+            <button id="button2" onclick="showDiv(2)" class="px-2"> Wallet </button>
         </div>
 
         <div id="div1" class="col-xl-4 col-lg-6 d-block d-sm-nonee">
@@ -449,31 +457,50 @@
                 </div>
             </div>
             <h4 class="mt-4">Bitcoin Gold Trading ( Coins )</h4>
-            <div class="button-row">
-                <a class="btn gr-bg-3 text-white btn-sm" href="buy coin link">{{ __('BUY Coin') }}</a>
-                <a class="btn gr-bg-8 text-white btn-sm" href="sell coin link">{{ __('SELL Coin') }}</a>
-            </div>
+            @foreach ($coins as $coin)
+                <div class="row mb-4">
+                    <div class="col-12">
+                        @include('common.chart', ['coin' => $coin])
+                    </div>
+                    <div class="col-12 text-center">
+                        <div class="button-row">
+                            <a class="btn gr-bg-3 text-white btn-sm"
+                                href="buy coin link">{{ __('BUY ' . $coin->name) }}</a>
+                            <a class="btn gr-bg-8 text-white btn-sm"
+                                href="sell coin link">{{ __('SELL ' . $coin->name) }}</a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
 
             <table class="table table-bordered table-striped mt-3">
-                <thead class="gr-bg-3 text-white">
+                <thead class="gr-bg-1 text-white">
                     <tr>
                         <th>Name</th>
                         <th>Last Price</th>
+                        <th>Current Price</th>
                         <th>Change</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($coins as $coin)
+                        <tr class="gr-bg-{{ $loop->index + 5 }} text-white">
+                            <td class=" text-white"><i
+                                    class="{{ $loop->first ? 'fab fa-bitcoin' : 'fas fa-coins' }}   text-white"></i> BGT
+                            </td>
+                            <td class=" text-white">{{ showAmount($coin->latest_price->prev_price) }}</td>
+                            <td class=" text-white">{{ showAmount($coin->latest_price->current_price) }}</td>
+                            <td class=" {{ $coin->change > 0 ? 'text-success' : 'text-warning' }} ">{{ $coin->change }}%
+                                @if ($coin->change > 0)
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                @else
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
 
-                    <tr class="gr-bg-8 text-white">
-                        <td class=" text-white"><i class="fab fa-bitcoin  text-white"></i> BGT</td>
-                        <td class=" text-white">0.6</td>
-                        <td class=" text-white">-0.05%</td>
-                    </tr>
-                    <tr class="gr-bg-4 text-white">
-                        <td> <i class="fas fa-coins  text-white"></i> RV</td>
-                        <td>0.6</td>
-                        <td>+0.07%</td>
-                    </tr>
                 </tbody>
             </table>
 
@@ -494,7 +521,7 @@
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js"
                     async>
                     {
-                        "colorTheme": "light",
+                        "colorTheme": "dark",
                         "dateRange": "12M",
                         "showChart": true,
                         "locale": "en",
@@ -502,7 +529,7 @@
                         "isTransparent": false,
                         "showSymbolLogo": true,
                         "showFloatingTooltip": false,
-                        "width": "400",
+                        "width": "100%",
                         "height": "660",
                         "plotLineColorGrowing": "rgba(0, 255, 0, 1)",
                         "plotLineColorFalling": "rgba(255, 0, 0, 1)",
