@@ -29,6 +29,7 @@ class CreatePriceHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('price_histories');
+         Schema::dropIfExists('price_histories');
     }
 }
+
