@@ -36,13 +36,41 @@
             <?php endif; ?>
 
 
-            <li class="sidebar-menu-caption"><?php echo e(__('Manage Plan')); ?></li>
+            <li class="sidebar-menu-caption"><?php echo e(__('Manage Plans')); ?></li>
 
             <?php if(auth()->guard('admin')->user()->can('manage-plan')): ?>
-                <li class="nav-item dropdown <?php echo e(menuActive('admin.coins*')); ?>">
+                <li class="nav-item dropdown <?php echo e(menuActive('admin.plan*')); ?>">
+                    <a href="<?php echo e(route('admin.plan.index')); ?>" class="nav-link ">
+                        <i data-feather="box"></i>
+                        <span><?php echo e(__('Plans')); ?></span>
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if(auth()->guard('admin')->user()->can('manage-schedule')): ?>
+                <li class="nav-item dropdown <?php echo e(menuActive('admin.time*')); ?>">
+                    <a href="<?php echo e(route('admin.time.index')); ?>" class="nav-link ">
+                        <i data-feather="calendar"></i>
+                        <span><?php echo e(__('Schedule')); ?></span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <li class="sidebar-menu-caption"><?php echo e(__('Manage Coins')); ?></li>
+
+            <?php if(auth()->guard('admin')->user()->can('manage-plan')): ?>
+                <li class="nav-item dropdown <?php echo e(menuActive('admin.coins.index')); ?>">
                     <a href="<?php echo e(route('admin.coins.index')); ?>" class="nav-link ">
                         <i data-feather="box"></i>
                         <span><?php echo e(__('Coins')); ?></span>
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if(auth()->guard('admin')->user()->can('manage-plan')): ?>
+                <li class="nav-item dropdown <?php echo e(menuActive('admin.coins.stats')); ?>">
+                    <a href="<?php echo e(route('admin.coins.stats')); ?>" class="nav-link ">
+                        <i data-feather="box"></i>
+                        <span><?php echo e(__('Coins Stats')); ?></span>
                     </a>
                 </li>
             <?php endif; ?>

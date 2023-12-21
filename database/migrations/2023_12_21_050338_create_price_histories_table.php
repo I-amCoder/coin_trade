@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCoinsTable extends Migration
+class CreatePriceHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateCoinsTable extends Migration
      */
     public function up()
     {
-        Schema::create('coins', function (Blueprint $table) {
+        Schema::create('price_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('logo');
-            $table->string('initial_price');
-            $table->string('current_price');
-            $table->string('minimum_price');
-            $table->string('maximum_price');
+            $table->unsignedBigInteger('coin_id');
+            $table->float('prev_price')->default(0);
+            $table->float('current_price')->default(0);
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ class CreateCoinsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coins');
+        Schema::dropIfExists('price_histories');
     }
 }

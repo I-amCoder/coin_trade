@@ -103,7 +103,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         Route::middleware('permission:manage-plan,admin')->group(function () {
-            Route::resource('coins', CoinsController::class)->except(['show','destroy']);
+            Route::resource('coins', CoinsController::class)->only(['index', 'store', 'update']);
+            Route::get('coin-stats', [CoinsController::class, 'stats'])->name('coins.stats');
+            Route::post('update-coin-bounderies/{id}', [CoinsController::class, 'updateBounderies'])->name('coins.bounderies.update');
+            Route::post('update-coin-price/{id}', [CoinsController::class, 'updatePrice'])->name('coins.price.update');
         });
 
 

@@ -36,13 +36,41 @@
             @endif
 
 
-            <li class="sidebar-menu-caption">{{ __('Manage Plan') }}</li>
+            <li class="sidebar-menu-caption">{{ __('Manage Plans') }}</li>
 
             @if (auth()->guard('admin')->user()->can('manage-plan'))
-                <li class="nav-item dropdown {{ menuActive('admin.coins*') }}">
+                <li class="nav-item dropdown {{ menuActive('admin.plan*') }}">
+                    <a href="{{ route('admin.plan.index') }}" class="nav-link ">
+                        <i data-feather="box"></i>
+                        <span>{{ __('Plans') }}</span>
+                    </a>
+                </li>
+            @endif
+
+            @if (auth()->guard('admin')->user()->can('manage-schedule'))
+                <li class="nav-item dropdown {{ menuActive('admin.time*') }}">
+                    <a href="{{ route('admin.time.index') }}" class="nav-link ">
+                        <i data-feather="calendar"></i>
+                        <span>{{ __('Schedule') }}</span>
+                    </a>
+                </li>
+            @endif
+            <li class="sidebar-menu-caption">{{ __('Manage Coins') }}</li>
+
+            @if (auth()->guard('admin')->user()->can('manage-plan'))
+                <li class="nav-item dropdown {{ menuActive('admin.coins.index') }}">
                     <a href="{{ route('admin.coins.index') }}" class="nav-link ">
                         <i data-feather="box"></i>
                         <span>{{ __('Coins') }}</span>
+                    </a>
+                </li>
+            @endif
+
+            @if (auth()->guard('admin')->user()->can('manage-plan'))
+                <li class="nav-item dropdown {{ menuActive('admin.coins.stats') }}">
+                    <a href="{{ route('admin.coins.stats') }}" class="nav-link ">
+                        <i data-feather="box"></i>
+                        <span>{{ __('Coins Stats') }}</span>
                     </a>
                 </li>
             @endif
