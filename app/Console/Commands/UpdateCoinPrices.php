@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Coin;
 use App\Models\PriceHistory;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Pusher\Pusher;
 
@@ -60,7 +61,9 @@ class UpdateCoinPrices extends Command
             $history->save();
             $coin->save();
 
-
+            // Delete data before last 20 days
+            $time = Carbon::now()->subHours(1);
+            PriceHistory::where('created_at', '<', $time)->delete();
 
             $data['coin_id'] = $coin->id;
             $data['coin_name'] = $coin->name;
