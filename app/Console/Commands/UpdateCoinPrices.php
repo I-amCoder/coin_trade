@@ -41,7 +41,7 @@ class UpdateCoinPrices extends Command
      */
     public function handle()
     {
-        $coins = Coin::all();
+        $coins = Coin::latest()->take(2)->get();
 
         foreach ($coins as $coin) {
 
