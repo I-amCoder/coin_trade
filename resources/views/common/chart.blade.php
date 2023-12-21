@@ -33,6 +33,8 @@
             var data_{{ $coin->id }} = JSON.parse("{{ $coin->price_jsons }}");
             var labels_{{ $coin->id }} = JSON.parse(he.decode("{{ $coin->chart_labels }}"));
 
+
+
             // Limit the number of labels and data points to display
 
             const stockData{{ $coin->id }} = {
