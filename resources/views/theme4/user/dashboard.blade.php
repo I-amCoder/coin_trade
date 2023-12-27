@@ -511,7 +511,7 @@
                                 </div>
                             </div>
 
-                            <div class="button-row ">
+                            {{-- <div class="button-row ">
                                 <button class="btn gr-bg-3  text-white btn-sm upCoin"
                                     data-href="{{ route('user.coin.buy', $coin->id) }}"
                                     data-coin="{{ json_encode($coin) }}" type="button" href="#">
@@ -523,7 +523,7 @@
                                     data-coin="{{ json_encode($coin) }}" type="button" href="#">
                                     <i class="fa-solid fa-arrow-down"></i>
                                 </button>
-                            </div>
+                            </div> --}}
                         </form>
 
                         <div class="row mt-4">
