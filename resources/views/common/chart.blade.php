@@ -171,7 +171,7 @@
                             });
 
                             current_{{ $coin->name }}_rate = updatedPriceData.price;
-                            $("#coin_{{ $coin->id }}_rate").html(updatedPriceData.price);
+                            $(".current_{{ $coin->id }}_rate").html("Current {{ $coin->name }} rate: " + updatedPriceData.price);
 
                             stockChart{{ $coin->id }}.update();
                         }

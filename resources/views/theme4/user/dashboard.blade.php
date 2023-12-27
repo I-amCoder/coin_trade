@@ -62,30 +62,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-12 col-6">
-                    <div class="d-box-three gr-bg-1">
+                @foreach ($coins as $coin)
+                    <div class="col-lg-12 col-6">
+                        <div class="d-box-three gr-bg-1">
 
-                        <i class="fab fa-bitcoin  text-white"></i>
+                            <i class="{{ $coin->name == ('rv' || 'RV') ? 'fas fa-coins' : 'fab fa-bitcoin' }}   text-white"></i>
 
-                        <div class="content">
-                            <p class="text-small mb-0 text-white">{{ __('BGT Coins') }}</p>
-                            <h5 class="title text-white">
-                                {{ $withdraw }} BGT</h5>
+                            <div class="content">
+                                <p class="text-small mb-0 text-white">{{ __($coin->name . ' Coins') }}</p>
+                                <h5 class="title text-white">
+                                    {{ auth()->user()->wallet($coin->id)->amount }} {{ $coin->name }}</h5>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-12 col-6">
-                    <div class="d-box-three gr-bg-8">
-
-                        <i class="fas fa-coins  text-white"></i>
-
-                        <div class="content">
-                            <p class="text-small mb-0 text-white">{{ __('RV Coins') }}</p>
-                            <h5 class="title text-white">
-                                {{ $totalDeposit }} RV</h5>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
             <br>
             <!-- mobile screen card start -->
@@ -473,15 +463,15 @@
 
 
                         <div class="button-row ">
-                            <button class="btn gr-bg-3  text-white btn-sm upCoin"
+                            <button class="btn gr-bg-3  text-white btn-sm buyCoin"
                                 data-href="{{ route('user.coin.buy', $coin->id) }}" data-coin="{{ json_encode($coin) }}"
                                 type="button" href="#">
                                 Sell
 
                             </button>
-                            <button class="btn gr-bg-8 text-white btn-sm downCoin"
-                                data-href="{{ route('user.coin.buy', $coin->id) }}" data-coin="{{ json_encode($coin) }}"
-                                type="button" href="#">
+                            <button class="btn gr-bg-8 text-white btn-sm sellCoin"
+                                data-href="{{ route('user.coin.sell', $coin->id) }}"
+                                data-coin="{{ json_encode($coin) }}" type="button" href="#">
                                 Buy
                             </button>
                         </div>
@@ -507,7 +497,7 @@
                         <tr class="gr-bg-{{ $loop->index + 5 }} text-white">
                             <td class=" text-white"><i
                                     class="{{ $loop->first ? 'fab fa-bitcoin' : 'fas fa-coins' }}   text-white"></i>
-                                BGT
+                                {{ $coin->name }}
                             </td>
                             <td class=" text-white">{{ showAmount($coin->latest_price->prev_price) }}</td>
                             <td class=" text-white">{{ showAmount($coin->latest_price->current_price) }}</td>
@@ -760,7 +750,7 @@
                         </div>
                         <div class="form-group">
                             <label for="">To Wallet</label>
-                            <select required name="wallet"  class="form-select">
+                            <select required name="wallet" class="form-select">
                                 <option value="exchange_wallet">Exchange Wallet</option>
                                 <option value="main_wallet">Main Wallet</option>
                             </select>
@@ -769,6 +759,36 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Swipe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="tradeCoinModal" tabindex="-1" aria-labelledby="tradeCoinModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tradeCoinModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Amount</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="amount" required>
+                                <div class="input-group-text">{{ @$general->site_currency }}</div>
+                            </div>
+                            <span id="coin_rate"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary"></button>
                     </div>
                 </form>
             </div>
@@ -918,42 +938,44 @@
 
 
 
-        // $(".buyCoin").click(function(e) {
-        //     e.preventDefault();
-        //     var modal = $("#tradeCoinModal");
-        //     var coin = $(this).data("coin");
-        //     var className = "current_" + coin.name + "_rate";
-        //     $("#coin_rate").addClass(className);
+        $(".buyCoin").click(function(e) {
+            e.preventDefault();
+            var modal = $("#tradeCoinModal");
+            var coin = $(this).data("coin");
+            var className = "current_" + coin.id + "_rate";
+            $("#coin_rate").addClass(className);
 
-        //     $("." + className).html("Current " + coin.name + " rate: " + eval("current_" +
-        //         coin.name + "_rate"));
+            $("." + className).html("Current " + coin.name + " rate: " + eval("current_" +
+                coin.name + "_rate"));
 
-        //     modal.find('.modal-title').html("Trade " + coin.name);
-        //     modal.find('.submit').text("Buy Now")
-        //     modal.find('form').attr("action", $(this).data('href'));
-        //     modal.modal('show');
-        // });
+            modal.find('.modal-title').html("Trade " + coin.name);
+            modal.find('button[type=submit]').text("Buy Now")
+            modal.find('form').attr("action", $(this).data('href'));
+            modal.modal('show');
+        });
 
-        // $(".sellCoin").click(function(e) {
-        //     e.preventDefault();
-        //     var modal = $("#tradeCoinModal");
-        //     var coin = $(this).data("coin");
-        //     var className = "current_" + coin.name + "_rate";
-        //     $("#coin_rate").addClass(className);
+        $(".sellCoin").click(function(e) {
+            e.preventDefault();
+            var modal = $("#tradeCoinModal");
+            var coin = $(this).data("coin");
+            var className = "current_" + coin.id + "_rate";
+            $("#coin_rate").addClass(className);
 
-        //     $("." + className).html("Current " + coin.name + " rate: " + eval("current_" +
-        //         coin.name + "_rate"));
+            $("." + className).html("Current " + coin.name + " rate: " + eval("current_" +
+                coin.name + "_rate"));
 
-        //     modal.find('.modal-title').html("Trade " + coin.name);
-        //     modal.find('.submit').text("Sell Now")
-        //     modal.find('form').attr("action", $(this).data('href'));
-        //     modal.modal('show');
-        // });
+            modal.find('.modal-title').html("Trade " + coin.name);
+            modal.find('button[type=submit]').text("Sell Now")
+            modal.find('form').attr("action", $(this).data('href'));
+            modal.modal('show');
+        });
 
-        // $("#tradeCoinModal").on("hidden.bs.modal", function() {
-        //     $("#coin_rate").removeAttr("class");
-        //     $("#tradeCoinModal").find('.modal-title').html("");
-        // });
+        $("#tradeCoinModal").on("hidden.bs.modal", function() {
+            $("#coin_rate").removeAttr("class");
+            $("#tradeCoinModal").find('.modal-title').html("");
+            $("#tradeCoinModal").find('input[name=amount]').val("");
+            $("#tradeCoinModal").removeAttr('action');
+        });
 
         var copyButton = document.querySelector('.copy');
         var copyInput = document.querySelector('.copy-text');

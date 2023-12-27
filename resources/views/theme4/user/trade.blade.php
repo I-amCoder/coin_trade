@@ -167,7 +167,7 @@
                                                                     <td data-caption="Starting Rate">
                                                                         {{ $trade->starting_rate }}</td>
                                                                     <td data-caption="Closing Rate"><span
-                                                                            id="coin_{{ $coin->id }}_rate">{{ $coin->current_price }}</span>
+                                                                            class="coin_{{ $coin->id }}_rate">{{ $coin->current_price }}</span>
                                                                     </td>
                                                                     <td data-caption="Action">
                                                                         <a href="{{ route('user.trade.stop', $trade->id) }}"

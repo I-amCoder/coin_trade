@@ -42,6 +42,32 @@ class TradeController extends Controller
         return back()->withSuccess("Balance Swiped Successfully");
     }
 
+    public function buyCoin(Request $request, $id)
+    {
+        $coin = Coin::findOrFail($id);
+        $request->validate([
+            'amount' => 'required|numeric'
+        ]);
+
+        $user = auth()->user();
+        $rate = $coin->current_price;
+        $coins = $request->amount / $rate;
+
+        if ($request->amount > $user->exchange_balance) {
+            return back()->withError("Insufficient Balance");
+        }
+
+        $user->exchange_balance -= $request->amount;
+        $wallet = $user->wallet($coin->id);
+        $wallet->amount += $coins;
+
+        $wallet->save();
+        $user->save();
+
+        return back()->withSuccess("Coins Purchased Successfully");
+
+    }
+
 
     public function tradeCoin(Request $request, $id)
     {
