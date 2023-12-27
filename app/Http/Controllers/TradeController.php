@@ -15,6 +15,33 @@ class TradeController extends Controller
         return view('theme4.user.trade', compact('coins'));
     }
 
+    public function exchangeBalance(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric',
+            'wallet' => 'required|in:exchange_wallet,main_wallet'
+        ]);
+
+        $user = auth()->user();
+
+        if ($request->wallet == 'exchange_wallet') {
+            $from_amount = $user->balance;
+            $user->balance -= $request->amount;
+            $user->exchange_balance += $request->amount;
+        } else {
+            $from_amount = $user->exchange_balance;
+            $user->exchange_balance -= $request->amount;
+            $user->balance += $request->amount;
+        }
+
+        if ($request->amount > $from_amount) {
+            return back()->withError(("Insufficient balance to transfer in " . str_replace("_", " ", $request->wallet)));
+        }
+
+        $user->save();
+        return back()->withSuccess("Balance Swiped Successfully");
+    }
+
 
     public function tradeCoin(Request $request, $id)
     {
@@ -98,7 +125,7 @@ class TradeController extends Controller
     }
 
 
-    public function giveReward(Trade $trade,$force = false)
+    public function giveReward(Trade $trade, $force = false)
     {
         $coin = Coin::find($trade->coin_id);
 

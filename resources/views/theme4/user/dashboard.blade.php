@@ -9,29 +9,7 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 @endpush
 @section('content2')
-    <script>
-        function getCountDown(elementId, seconds) {
-            var times = seconds;
 
-            var x = setInterval(function() {
-                var distance = times * 1000;
-
-                if (distance < 0) {
-                    clearInterval(x);
-                    // firePayment(elementId);
-                    alert('trade_done');
-                    return;
-                }
-                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                document.getElementById(elementId).innerHTML = days + "d " + hours + "h " + minutes + "m " +
-                    seconds + "s ";
-                times--;
-            }, 1000);
-        }
-    </script>
 
     <div class="dashboard-body-part">
 
@@ -39,6 +17,12 @@
             <button id="button1" onclick="showDiv(1)" class="active p-2">Exchange </button>
 
             <button id="button2" onclick="showDiv(2)" class="px-2"> Wallet </button>
+        </div>
+        <div class="row my-2 text-center">
+            <div class="col">
+                <button class="btn w-100 btn-outline-info swipeBalance">Swipe Balance</button>
+
+            </div>
         </div>
 
         <div id="div1" class="col-xl-4 col-lg-6 d-block ">
@@ -486,85 +470,23 @@
                         @include('common.chart', ['coin' => $coin])
                     </div>
                     <div class="col-12 text-center">
-                        <form id="trade-form{{ $coin->id }}"
-                            class="d-flex flex-column align-items-center justify-content-center">
-                            @csrf
-                            <input type="hidden" name="type">
-                            <div class="form-group w-50">
-                                <div class="input-group">
-                                    <span class="input-group-text minus-bid" data-coin-id="{{ $coin->id }}"><i
-                                            class="fa fa-minus"></i></span>
-                                    <input required class="form-control" name="trade_amount{{ $coin->id }}"
-                                        placeholder="Amount" type="text">
-                                    <span class="input-group-text plus-bid" data-coin-id="{{ $coin->id }}"><i
-                                            class="fa fa-plus"></i></span>
-                                </div>
-                            </div>
-                            <div class="form-group   w-50">
-                                <div class="input-group">
-                                    <span class="input-group-text minus-time" data-coin-id="{{ $coin->id }}"><i
-                                            class="fa fa-minus"></i></span>
-                                    <input required class="form-control" name="trade_time{{ $coin->id }}"
-                                        placeholder="Minutes" type="text">
-                                    <span class="input-group-text plus-time" data-coin-id="{{ $coin->id }}"><i
-                                            class="fa fa-plus"></i></span>
-                                </div>
-                            </div>
 
-                            {{-- <div class="button-row ">
-                                <button class="btn gr-bg-3  text-white btn-sm upCoin"
-                                    data-href="{{ route('user.coin.buy', $coin->id) }}"
-                                    data-coin="{{ json_encode($coin) }}" type="button" href="#">
-                                    <i class="fa-solid fa-arrow-up"></i>
 
-                                </button>
-                                <button class="btn gr-bg-8 text-white btn-sm downCoin"
-                                    data-href="{{ route('user.coin.buy', $coin->id) }}"
-                                    data-coin="{{ json_encode($coin) }}" type="button" href="#">
-                                    <i class="fa-solid fa-arrow-down"></i>
-                                </button>
-                            </div> --}}
-                        </form>
+                        <div class="button-row ">
+                            <button class="btn gr-bg-3  text-white btn-sm upCoin"
+                                data-href="{{ route('user.coin.buy', $coin->id) }}" data-coin="{{ json_encode($coin) }}"
+                                type="button" href="#">
+                                Sell
 
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                @if (count(auth()->user()->trades($coin->id)) > 0)
-                                    <div class="responsive-table">
-                                        <table class="table table-stripped table-dark site-table">
-                                            <thead>
-                                                <th>Amount</th>
-                                                <th>Time Left</th>
-                                                <th>Action</th>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (auth()->user()->trades($coin->id) as $trade)
-                                                    <tr>
-                                                        <td data-caption="{{ __('Amount') }}">
-                                                            {{ showAmount($trade->bid) }}</td>
-                                                        <td data-caption="Time Left">
-                                                            <p id="trade_count_{{ $loop->iteration }}" class="mb-2">
-                                                            </p>
-                                                            <script>
-                                                                getCountDown("trade_count_{{ $loop->iteration }}",
-                                                                    "{{ now()->gt($trade->ends_at) ? 0 : now()->diffInSeconds($trade->ends_at) }}"
-                                                                )
-                                                            </script>
-
-                                                        </td>
-                                                        <td data-caption="Action">
-                                                            <a href="" class="btn btn-danger">Stop</a>
-
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @else
-                                    <h5>No Active Trades</h5>
-                                @endif
-                            </div>
+                            </button>
+                            <button class="btn gr-bg-8 text-white btn-sm downCoin"
+                                data-href="{{ route('user.coin.buy', $coin->id) }}" data-coin="{{ json_encode($coin) }}"
+                                type="button" href="#">
+                                Buy
+                            </button>
                         </div>
+
+
 
                     </div>
                 </div>
@@ -817,6 +739,41 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="swipeBalanceModal" tabindex="-1" aria-labelledby="swipeBalanceModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="swipeBalanceModalLabel">Swipe Amount</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('user.balance.exchange') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Amount</label>
+                            <div class="input-group">
+                                <input required type="text" class="form-control" name="amount">
+                                <span class="input-group-text">{{ @$general->site_currency }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">To Wallet</label>
+                            <select required name="wallet"  class="form-select">
+                                <option value="exchange_wallet">Exchange Wallet</option>
+                                <option value="main_wallet">Main Wallet</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Swipe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 @endsection
 
@@ -951,6 +908,13 @@
 
 
         })
+
+        $(".swipeBalance").click(function(e) {
+            e.preventDefault();
+            var modal = $("#swipeBalanceModal");
+            modal.modal('show');
+
+        });
 
 
 
