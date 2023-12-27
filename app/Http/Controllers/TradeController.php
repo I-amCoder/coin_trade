@@ -131,6 +131,7 @@ class TradeController extends Controller
 
                 $trade->closing_rate = $current_rate;
                 $trade->margin = $margin;
+                $trade->ends_at = now();
                 $trade->status = 1;
 
                 $wallet->amount -= $coin_amount;

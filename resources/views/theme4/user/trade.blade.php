@@ -146,7 +146,7 @@
                                                             <th>Action</th>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach (auth()->user()->trades($coin->id) as $trade)
+                                                            @foreach (auth()->user()->activeTrades($coin->id) as $trade)
                                                                 <tr>
                                                                     <td data-caption="{{ __('Amount') }}">
                                                                         {{ showAmount($trade->bid) }}</td>
