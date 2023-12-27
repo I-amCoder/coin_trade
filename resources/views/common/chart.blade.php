@@ -169,6 +169,19 @@
                                 }
 
                             });
+                            var change = ((updatedPriceData.price - current_{{ $coin->name }}_rate) /
+                                current_{{ $coin->name }}_rate) * 100;
+                                if(change > 0){
+                                    $(".change{{ $coin->id }}").html(change.toFixed(3) + `% <i class="fa-solid fa-arrow-up"></i>`);
+                                    $(".change{{ $coin->id }}").addClass("text-success");
+                                    $(".change{{ $coin->id }}").removeClass("text-danger");
+
+                                }else{
+                                    $(".change{{ $coin->id }}").html(change.toFixed(3) + `% <i class="fa-solid fa-arrow-down"></i>`);
+
+                                    $(".change{{ $coin->id }}").removeClass("text-success");
+                                    $(".change{{ $coin->id }}").addClass("text-danger");
+                                }
 
                             $(".prev_{{ $coin->id }}_price").html(current_{{ $coin->name }}_rate +
                                 "{{ @$general->site_currency }}");
@@ -177,6 +190,7 @@
                                 updatedPriceData.price);
                             $(".current_{{ $coin->id }}_price").html(updatedPriceData.price +
                                 "{{ @$general->site_currency }}");
+
 
                             stockChart{{ $coin->id }}.update();
                         }
