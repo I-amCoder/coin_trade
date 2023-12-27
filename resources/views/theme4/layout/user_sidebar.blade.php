@@ -13,7 +13,7 @@
           <li class="{{singleMenu('user.invest.log')}}">
             <a href="{{ route('user.invest.log') }}"><i data-feather="chevrons-right"></i> {{ __('Invest Log') }}</a>
           </li>
-        </ul> 
+        </ul>
       </li>
 
       <li class="has_submenu {{arrayMenu(['user.deposit','user.deposit.log'])}}">
@@ -61,7 +61,7 @@
       <li class="{{singleMenu('user.commision')}}">
         <a href="{{ route('user.commision') }}"><i data-feather="file-text"></i> {{ __('Refferal Log') }}</a>
       </li>
-      
+
       <li class="{{singleMenu('user.2fa')}}">
         <a href="{{ route('user.2fa') }}"><i data-feather="shield"></i> {{ __('2FA') }}</a>
       </li>
@@ -84,7 +84,7 @@
 <div class="mobile-bottom-menu-wrapper">
   <ul class="mobile-bottom-menu">
     <li>
-      <a href="{{ route('user.deposit') }}" class="{{ activeMenu(route('user.deposit')) }}">
+      <a href="{{ route('user.trade') }}" class="{{ activeMenu(route('user.trade')) }}">
         <i class="fas fa-chart-line"></i>
         <span>{{ __('Trading') }}</span>
       </a>

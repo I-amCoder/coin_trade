@@ -28,7 +28,8 @@ class Coin extends Model
         $startTime = $now->subMinutes(20);
         // $startTime = $now->subDays(20);
 
-        $prices = $this->prices()->where('created_at', '>', $startTime)->pluck('current_price');
+        // $prices = $this->prices()->where('created_at', '>', $startTime)->pluck('current_price');
+        $prices = $this->prices()->pluck('current_price');
 
         return json_encode($prices);
     }
@@ -41,7 +42,8 @@ class Coin extends Model
 
         $startTime = $now->subMinutes(20);
         // $startTime = $now->subDays(20);
-        $labels = $this->prices()->where('created_at', '>', $startTime)->pluck('created_at');
+        // $labels = $this->prices()->where('created_at', '>', $startTime)->pluck('created_at');
+        $labels = $this->prices()->pluck('created_at');
         $formatted = $labels->map(function ($item) {
             return $item->format('H:i');
         });

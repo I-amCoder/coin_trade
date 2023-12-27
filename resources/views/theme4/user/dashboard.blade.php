@@ -9,6 +9,30 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 @endpush
 @section('content2')
+    <script>
+        function getCountDown(elementId, seconds) {
+            var times = seconds;
+
+            var x = setInterval(function() {
+                var distance = times * 1000;
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    // firePayment(elementId);
+                    alert('trade_done');
+                    return;
+                }
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                document.getElementById(elementId).innerHTML = days + "d " + hours + "h " + minutes + "m " +
+                    seconds + "s ";
+                times--;
+            }, 1000);
+        }
+    </script>
+
     <div class="dashboard-body-part">
 
         <div class="button-container">
@@ -17,19 +41,17 @@
             <button id="button2" onclick="showDiv(2)" class="px-2"> Wallet </button>
         </div>
 
-        <div id="div1" class="col-xl-4 col-lg-6 d-block d-sm-nonee">
-            <div class="col-xl-4 col-lg-6">
-                <div class="user-account-number h-50 bg-success">
-
-
-                    <p class="caption mb-2"> {{ __('Exchange Balance') }}</p>
-                    <h3 class="acc-number"> <i class="fa-solid fa-dollar"></i>
-                        {{ number_format(auth()->user()->balance, 2) . ' ' . $general->site_currency }}
-                    </h3>
-
+        <div id="div1" class="col-xl-4 col-lg-6 d-block ">
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="user-account-number h-100 bg-success">
+                        <p class="caption mb-2"> {{ __('Exchange Balance') }}</p>
+                        <h3 class="acc-number"> <i class="fa-solid fa-dollar"></i>
+                            {{ number_format(auth()->user()->exchange_balance, 2) . ' ' . $general->site_currency }}
+                        </h3>
+                    </div>
                 </div>
             </div>
-            <br>
             <!-- Your div1 content here -->
             <div class="row g-sm-4 g-3">
                 <div class="col-lg-12 col-6">
@@ -143,7 +165,8 @@
                         <i class="fa-solid fa-money-bill-1-wave"></i>
                         <div class="content">
                             <p class="text-small mb-0 text-white">{{ __('Daily Profit') }}</p>
-                            <h5 class="title text-white">{{ number_format($withdraw, 2) . ' ' . $general->site_currency }}
+                            <h5 class="title text-white">
+                                {{ number_format($withdraw, 2) . ' ' . $general->site_currency }}
                             </h5>
                         </div>
                     </div>
@@ -463,12 +486,86 @@
                         @include('common.chart', ['coin' => $coin])
                     </div>
                     <div class="col-12 text-center">
-                        <div class="button-row">
-                            <a class="btn gr-bg-3 text-white btn-sm"
-                                href="buy coin link">{{ __('BUY ' . $coin->name) }}</a>
-                            <a class="btn gr-bg-8 text-white btn-sm"
-                                href="sell coin link">{{ __('SELL ' . $coin->name) }}</a>
+                        <form id="trade-form{{ $coin->id }}"
+                            class="d-flex flex-column align-items-center justify-content-center">
+                            @csrf
+                            <input type="hidden" name="type">
+                            <div class="form-group w-50">
+                                <div class="input-group">
+                                    <span class="input-group-text minus-bid" data-coin-id="{{ $coin->id }}"><i
+                                            class="fa fa-minus"></i></span>
+                                    <input required class="form-control" name="trade_amount{{ $coin->id }}"
+                                        placeholder="Amount" type="text">
+                                    <span class="input-group-text plus-bid" data-coin-id="{{ $coin->id }}"><i
+                                            class="fa fa-plus"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group   w-50">
+                                <div class="input-group">
+                                    <span class="input-group-text minus-time" data-coin-id="{{ $coin->id }}"><i
+                                            class="fa fa-minus"></i></span>
+                                    <input required class="form-control" name="trade_time{{ $coin->id }}"
+                                        placeholder="Minutes" type="text">
+                                    <span class="input-group-text plus-time" data-coin-id="{{ $coin->id }}"><i
+                                            class="fa fa-plus"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="button-row ">
+                                <button class="btn gr-bg-3  text-white btn-sm upCoin"
+                                    data-href="{{ route('user.coin.buy', $coin->id) }}"
+                                    data-coin="{{ json_encode($coin) }}" type="button" href="#">
+                                    <i class="fa-solid fa-arrow-up"></i>
+
+                                </button>
+                                <button class="btn gr-bg-8 text-white btn-sm downCoin"
+                                    data-href="{{ route('user.coin.buy', $coin->id) }}"
+                                    data-coin="{{ json_encode($coin) }}" type="button" href="#">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                @if (count(auth()->user()->trades($coin->id)) > 0)
+                                    <div class="responsive-table">
+                                        <table class="table table-stripped table-dark site-table">
+                                            <thead>
+                                                <th>Amount</th>
+                                                <th>Time Left</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (auth()->user()->trades($coin->id) as $trade)
+                                                    <tr>
+                                                        <td data-caption="{{ __('Amount') }}">
+                                                            {{ showAmount($trade->bid) }}</td>
+                                                        <td data-caption="Time Left">
+                                                            <p id="trade_count_{{ $loop->iteration }}" class="mb-2">
+                                                            </p>
+                                                            <script>
+                                                                getCountDown("trade_count_{{ $loop->iteration }}",
+                                                                    "{{ now()->gt($trade->ends_at) ? 0 : now()->diffInSeconds($trade->ends_at) }}"
+                                                                )
+                                                            </script>
+
+                                                        </td>
+                                                        <td data-caption="Action">
+                                                            <a href="" class="btn btn-danger">Stop</a>
+
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <h5>No Active Trades</h5>
+                                @endif
+                            </div>
                         </div>
+
                     </div>
                 </div>
             @endforeach
@@ -487,11 +584,13 @@
                     @foreach ($coins as $coin)
                         <tr class="gr-bg-{{ $loop->index + 5 }} text-white">
                             <td class=" text-white"><i
-                                    class="{{ $loop->first ? 'fab fa-bitcoin' : 'fas fa-coins' }}   text-white"></i> BGT
+                                    class="{{ $loop->first ? 'fab fa-bitcoin' : 'fas fa-coins' }}   text-white"></i>
+                                BGT
                             </td>
                             <td class=" text-white">{{ showAmount($coin->latest_price->prev_price) }}</td>
                             <td class=" text-white">{{ showAmount($coin->latest_price->current_price) }}</td>
-                            <td class=" {{ $coin->change > 0 ? 'text-success' : 'text-warning' }} ">{{ $coin->change }}%
+                            <td class=" {{ $coin->change > 0 ? 'text-success' : 'text-warning' }} ">
+                                {{ $coin->change }}%
                                 @if ($coin->change > 0)
                                     <i class="fa-solid fa-arrow-up"></i>
                                 @else
@@ -714,202 +813,305 @@
                 </div>
             </div>
 
-        @endsection
 
-        @push('style')
-            <style>
-                .modal-backdrop.fade.show {
-                    display: none;
-                }
+        </div>
+    </div>
 
-                @media (max-width: 991px) {
-                    #header.header-inner-pages {
-                        display: block;
-                        background: transparent !important;
-                        position: absolute;
+
+@endsection
+
+@push('style')
+    <style>
+        .modal-backdrop.fade.show {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            #header.header-inner-pages {
+                display: block;
+                background: transparent !important;
+                position: absolute;
+            }
+
+            .dashboard-body-part {
+                padding-top: 80px;
+            }
+        }
+
+        .sp-referral .single-child {
+            padding: 6px 10px;
+            border-radius: 5px;
+        }
+
+        .sp-referral .single-child+.single-child {
+            margin-top: 15px;
+        }
+
+        .sp-referral .single-child p {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .sp-referral .single-child p img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            -o-object-fit: cover;
+        }
+
+        .sp-referral .single-child p span {
+            width: calc(100% - 35px);
+            font-size: 14px;
+            padding-left: 10px;
+        }
+
+        .sp-referral>.single-child.root-child>p img {
+            border: 2px solid #c3c3c3;
+        }
+
+        .sub-child-list {
+            position: relative;
+            padding-left: 35px;
+        }
+
+        .sub-child-list::before {
+            position: absolute;
+            content: '';
+            top: 0;
+            left: 17px;
+            width: 1px;
+            height: 100%;
+            background-color: #a1a1a1;
+        }
+
+        .sub-child-list>.single-child {
+            position: relative;
+        }
+
+        .sub-child-list>.single-child::before {
+            position: absolute;
+            content: '';
+            left: -18px;
+            top: 21px;
+            width: 30px;
+            height: 5px;
+            border-left: 1px solid #a1a1a1;
+            border-bottom: 1px solid #a1a1a1;
+            border-radius: 0 0 0 5px;
+        }
+
+        .sub-child-list>.single-child>p img {
+            border: 2px solid #c3c3c3;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 5px;
+        }
+
+        .button-container button {
+            padding: 3px 5px;
+            border: 2px solid #fff;
+            background-color: transparent;
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button-container button.active {
+            background-color: #fff;
+            color: #000;
+            border-radius: 25px;
+        }
+
+        .button-container button:not(:last-child) {
+            margin-right: 10px;
+        }
+    </style>
+@endpush
+
+@push('script')
+    <script>
+        'use strict';
+
+        $('.planDelete').on('click', function() {
+            const modal = $('#planDelete');
+
+            modal.find('form').attr('action', $(this).data('href'))
+
+            modal.modal('show')
+
+
+        })
+
+        $(".upCoin").click(function(e) {
+            e.preventDefault();
+            var form = $("#trade-form");
+            var coin = $(this).data('coin');
+            form.attr('action', $(this).data('href'));
+            form.find('input[name=type]').val('buy');
+
+
+            // Validate
+            form.find(`input[name=${coin.id}]`).val() || 0;
+            if ((form.find(`input[name=trade_amount${coin.id}]`).val() || 0) < 1) {
+                alert('Please Enter Valid Trade Amount');
+                return;
+            }
+
+            if ((form.find(`input[name=trade_time${coin.id}]`).val() || 0) < 1) {
+                alert('Please Enter Valid Trade Time');
+                return;
+            }
+
+            form.submit();
+
+
+        });
+
+        // Increase value
+        $(document).on('click', '.plus-time', function() {
+            var inputField = $(this).siblings('input');
+            var currentValue = parseInt(inputField.val()) || 0;
+            inputField.val(currentValue + 1);
+        });
+
+        // Decrease value
+        $(document).on('click', '.minus-time', function() {
+            var inputField = $(this).siblings('input');
+            var currentValue = parseInt(inputField.val()) || 0;
+
+            // Make sure the value doesn't go below 0
+            if (currentValue > 1) {
+                inputField.val(currentValue - 1);
+            }
+        });
+
+        // Increase value
+        $(document).on('click', '.plus-bid', function() {
+            var inputField = $(this).siblings('input');
+            var currentValue = parseInt(inputField.val()) || 0;
+            inputField.val(currentValue + 1);
+        });
+
+        // Decrease value
+        $(document).on('click', '.minus-bid', function() {
+            var inputField = $(this).siblings('input');
+            var currentValue = parseInt(inputField.val()) || 0;
+
+            // Make sure the value doesn't go below 0
+            if (currentValue > 1) {
+                inputField.val(currentValue - 1);
+            }
+        });
+
+        // $(".buyCoin").click(function(e) {
+        //     e.preventDefault();
+        //     var modal = $("#tradeCoinModal");
+        //     var coin = $(this).data("coin");
+        //     var className = "current_" + coin.name + "_rate";
+        //     $("#coin_rate").addClass(className);
+
+        //     $("." + className).html("Current " + coin.name + " rate: " + eval("current_" +
+        //         coin.name + "_rate"));
+
+        //     modal.find('.modal-title').html("Trade " + coin.name);
+        //     modal.find('.submit').text("Buy Now")
+        //     modal.find('form').attr("action", $(this).data('href'));
+        //     modal.modal('show');
+        // });
+
+        // $(".sellCoin").click(function(e) {
+        //     e.preventDefault();
+        //     var modal = $("#tradeCoinModal");
+        //     var coin = $(this).data("coin");
+        //     var className = "current_" + coin.name + "_rate";
+        //     $("#coin_rate").addClass(className);
+
+        //     $("." + className).html("Current " + coin.name + " rate: " + eval("current_" +
+        //         coin.name + "_rate"));
+
+        //     modal.find('.modal-title').html("Trade " + coin.name);
+        //     modal.find('.submit').text("Sell Now")
+        //     modal.find('form').attr("action", $(this).data('href'));
+        //     modal.modal('show');
+        // });
+
+        // $("#tradeCoinModal").on("hidden.bs.modal", function() {
+        //     $("#coin_rate").removeAttr("class");
+        //     $("#tradeCoinModal").find('.modal-title').html("");
+        // });
+
+        var copyButton = document.querySelector('.copy');
+        var copyInput = document.querySelector('.copy-text');
+        copyButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            var text = copyInput.select();
+            document.execCommand('copy');
+        });
+        copyInput.addEventListener('click', function() {
+            this.select();
+        });
+
+
+        $('.mobile-card-slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            centerMode: true,
+            centerPadding: '60px',
+            arrows: false,
+            dots: false,
+            autoplay: false,
+            cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1.000)',
+            speed: 1500,
+            autoplaySpeed: 1000,
+            responsive: [{
+                    breakpoint: 1200,
+                    settings: {
+                        slidesToShow: 3
                     }
-
-                    .dashboard-body-part {
-                        padding-top: 80px;
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 2
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1
                     }
                 }
+            ]
+        });
 
-                .sp-referral .single-child {
-                    padding: 6px 10px;
-                    border-radius: 5px;
-                }
+        function showDiv(divNumber) {
+            document.getElementById('button1').classList.remove('active');
+            document.getElementById('button2').classList.remove('active');
 
-                .sp-referral .single-child+.single-child {
-                    margin-top: 15px;
-                }
-
-                .sp-referral .single-child p {
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: 0;
-                }
-
-                .sp-referral .single-child p img {
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                    -o-object-fit: cover;
-                }
-
-                .sp-referral .single-child p span {
-                    width: calc(100% - 35px);
-                    font-size: 14px;
-                    padding-left: 10px;
-                }
-
-                .sp-referral>.single-child.root-child>p img {
-                    border: 2px solid #c3c3c3;
-                }
-
-                .sub-child-list {
-                    position: relative;
-                    padding-left: 35px;
-                }
-
-                .sub-child-list::before {
-                    position: absolute;
-                    content: '';
-                    top: 0;
-                    left: 17px;
-                    width: 1px;
-                    height: 100%;
-                    background-color: #a1a1a1;
-                }
-
-                .sub-child-list>.single-child {
-                    position: relative;
-                }
-
-                .sub-child-list>.single-child::before {
-                    position: absolute;
-                    content: '';
-                    left: -18px;
-                    top: 21px;
-                    width: 30px;
-                    height: 5px;
-                    border-left: 1px solid #a1a1a1;
-                    border-bottom: 1px solid #a1a1a1;
-                    border-radius: 0 0 0 5px;
-                }
-
-                .sub-child-list>.single-child>p img {
-                    border: 2px solid #c3c3c3;
-                }
-
-                .hidden {
-                    display: none !important;
-                }
-
-                .button-container {
-                    display: flex;
-                    justify-content: center;
-                    margin: 5px;
-                }
-
-                .button-container button {
-                    padding: 3px 5px;
-                    border: 2px solid #fff;
-                    background-color: transparent;
-                    color: #fff;
-                    border-radius: 25px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                }
-
-                .button-container button.active {
-                    background-color: #fff;
-                    color: #000;
-                    border-radius: 25px;
-                }
-
-                .button-container button:not(:last-child) {
-                    margin-right: 10px;
-                }
-            </style>
-        @endpush
-
-        @push('script')
-            <script>
-                'use strict';
-
-                $('.planDelete').on('click', function() {
-                    const modal = $('#planDelete');
-
-                    modal.find('form').attr('action', $(this).data('href'))
-
-                    modal.modal('show')
-
-
-                })
-
-                var copyButton = document.querySelector('.copy');
-                var copyInput = document.querySelector('.copy-text');
-                copyButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    var text = copyInput.select();
-                    document.execCommand('copy');
-                });
-                copyInput.addEventListener('click', function() {
-                    this.select();
-                });
-
-
-                $('.mobile-card-slider').slick({
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    centerMode: true,
-                    centerPadding: '60px',
-                    arrows: false,
-                    dots: false,
-                    autoplay: false,
-                    cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1.000)',
-                    speed: 1500,
-                    autoplaySpeed: 1000,
-                    responsive: [{
-                            breakpoint: 1200,
-                            settings: {
-                                slidesToShow: 3
-                            }
-                        },
-                        {
-                            breakpoint: 768,
-                            settings: {
-                                slidesToShow: 2
-                            }
-                        },
-                        {
-                            breakpoint: 480,
-                            settings: {
-                                slidesToShow: 1
-                            }
-                        }
-                    ]
-                });
-
-                function showDiv(divNumber) {
-                    document.getElementById('button1').classList.remove('active');
-                    document.getElementById('button2').classList.remove('active');
-
-                    if (divNumber === 1) {
-                        document.getElementById('button1').classList.add('active');
-                        // Add logic to show Div 1
-                    } else {
-                        document.getElementById('button2').classList.add('active');
-                        // Add logic to show Div 2
-                    }
-                    if (divNumber === 1) {
-                        document.getElementById('div1').classList.remove('hidden');
-                        document.getElementById('div2').classList.add('hidden');
-                    } else {
-                        document.getElementById('div1').classList.add('hidden');
-                        document.getElementById('div2').classList.remove('hidden');
-                    }
-                }
-            </script>
-        @endpush
+            if (divNumber === 1) {
+                document.getElementById('button1').classList.add('active');
+                // Add logic to show Div 1
+            } else {
+                document.getElementById('button2').classList.add('active');
+                // Add logic to show Div 2
+            }
+            if (divNumber === 1) {
+                document.getElementById('div1').classList.remove('hidden');
+                document.getElementById('div2').classList.add('hidden');
+            } else {
+                document.getElementById('div1').classList.add('hidden');
+                document.getElementById('div2').classList.remove('hidden');
+            }
+        }
+    </script>
+@endpush

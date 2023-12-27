@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use PhpParser\Node\Expr\FuncCall;
 
 class User extends Authenticatable
 {
@@ -18,9 +19,7 @@ class User extends Authenticatable
      *
      * @var string[]
      */
-    protected $guarded = [
-
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -40,68 +39,82 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'address' => 'object',
-        'last_login' =>'datetime',
+        'last_login' => 'datetime',
         'kyc_infos' => 'array'
     ];
 
     public function getFullNameAttribute($value)
     {
-        return $this->fname.' '.$this->lname;
+        return $this->fname . ' ' . $this->lname;
     }
 
     public function loginSecurity()
     {
         return $this->hasOne(LoginSecurity::class);
     }
-    
+
     public function payments()
     {
-        return $this->hasMany(Payment::class,'user_id');
+        return $this->hasMany(Payment::class, 'user_id');
     }
 
     public function deposits()
     {
-        return $this->hasMany(Deposit::class,'user_id');
+        return $this->hasMany(Deposit::class, 'user_id');
     }
 
     public function refferals()
     {
-        return $this->hasMany(User::class,'reffered_by' );
+        return $this->hasMany(User::class, 'reffered_by');
     }
 
     public function refferedBy()
     {
-        return $this->belongsTo(User::class,'reffered_by');
+        return $this->belongsTo(User::class, 'reffered_by');
     }
-    
+
     public function reffer()
     {
-        return $this->hasMany(User::class,'reffered_by');
+        return $this->hasMany(User::class, 'reffered_by');
     }
 
     public function interest()
     {
-        return $this->hasMany(UserInterest::class,'user_id');
+        return $this->hasMany(UserInterest::class, 'user_id');
     }
 
     public function commissions()
     {
-        return $this->hasMany(RefferedCommission::class,'reffered_by');
+        return $this->hasMany(RefferedCommission::class, 'reffered_by');
     }
 
     public function tickets()
     {
-        return $this->hasMany(Ticket::class,'user_id');
+        return $this->hasMany(Ticket::class, 'user_id');
     }
-    
+
     public function getEmailAttribute($value)
     {
         return env('DEMO') ? '[Protected Email For Demo]' : $value;
     }
-    
-     public function getPhoneAttribute($value)
+
+    public function getPhoneAttribute($value)
     {
         return env('DEMO') ? '[Protected Phone for Demo]' : $value;
     }
 
+    public function wallet($id)
+    {
+        return $this->coins()->find($id);
+    }
+
+    public function coins()
+    {
+        return $this->hasMany(CoinsWallet::class, 'user_id', 'id');
+    }
+
+    public function trades($coin_id)
+    {
+        return Trade::where('coin_id', $coin_id)->latest()->get();
+    }
 }
