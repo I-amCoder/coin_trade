@@ -378,8 +378,9 @@ Route::name('user.')->group(function () {
 
 
             Route::get('trade',[TradeController::class,'trade'])->name('trade');
-            Route::post('buy-coin/{id}',[TradeController::class,'buyCoin'])->name('coin.buy');
-            Route::post('sell-coin/{id}',[TradeController::class,'sellCoin'])->name('coin.sell');
+            Route::post('trade-coin/{id}',[TradeController::class,'tradeCoin'])->name('coin.trade');
+            Route::get('stop-trade/{id?}',[TradeController::class,'stopTrade'])->name('trade.stop');
+
 
 
             Route::get('profile/setting', [UserController::class, 'profile'])->name('profile');

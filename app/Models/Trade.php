@@ -12,4 +12,6 @@ class Trade extends Model
     protected $casts = [
         'ends_at'=>'datetime'
     ];
+
+
 }

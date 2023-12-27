@@ -952,66 +952,7 @@
 
         })
 
-        $(".upCoin").click(function(e) {
-            e.preventDefault();
-            var form = $("#trade-form");
-            var coin = $(this).data('coin');
-            form.attr('action', $(this).data('href'));
-            form.find('input[name=type]').val('buy');
 
-
-            // Validate
-            form.find(`input[name=${coin.id}]`).val() || 0;
-            if ((form.find(`input[name=trade_amount${coin.id}]`).val() || 0) < 1) {
-                alert('Please Enter Valid Trade Amount');
-                return;
-            }
-
-            if ((form.find(`input[name=trade_time${coin.id}]`).val() || 0) < 1) {
-                alert('Please Enter Valid Trade Time');
-                return;
-            }
-
-            form.submit();
-
-
-        });
-
-        // Increase value
-        $(document).on('click', '.plus-time', function() {
-            var inputField = $(this).siblings('input');
-            var currentValue = parseInt(inputField.val()) || 0;
-            inputField.val(currentValue + 1);
-        });
-
-        // Decrease value
-        $(document).on('click', '.minus-time', function() {
-            var inputField = $(this).siblings('input');
-            var currentValue = parseInt(inputField.val()) || 0;
-
-            // Make sure the value doesn't go below 0
-            if (currentValue > 1) {
-                inputField.val(currentValue - 1);
-            }
-        });
-
-        // Increase value
-        $(document).on('click', '.plus-bid', function() {
-            var inputField = $(this).siblings('input');
-            var currentValue = parseInt(inputField.val()) || 0;
-            inputField.val(currentValue + 1);
-        });
-
-        // Decrease value
-        $(document).on('click', '.minus-bid', function() {
-            var inputField = $(this).siblings('input');
-            var currentValue = parseInt(inputField.val()) || 0;
-
-            // Make sure the value doesn't go below 0
-            if (currentValue > 1) {
-                inputField.val(currentValue - 1);
-            }
-        });
 
         // $(".buyCoin").click(function(e) {
         //     e.preventDefault();

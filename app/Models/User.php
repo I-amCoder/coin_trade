@@ -113,6 +113,11 @@ class User extends Authenticatable
         return $this->hasMany(CoinsWallet::class, 'user_id', 'id');
     }
 
+    public function activeTrades($coin_id)
+    {
+        return Trade::where('status', 0)->where('coin_id', $coin_id)->latest()->get();
+    }
+
     public function trades($coin_id)
     {
         return Trade::where('coin_id', $coin_id)->latest()->get();

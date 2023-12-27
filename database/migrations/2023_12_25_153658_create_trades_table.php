@@ -21,7 +21,7 @@ class CreateTradesTable extends Migration
             $table->integer('duration');
             $table->enum('duration_type',['minute','hour','day']);
             $table->float('bid');
-            $table->enum('type',['buy','sell']);
+            $table->enum('type',['up','down']);
             $table->float('starting_rate')->default(0);
             $table->float('closing_rate')->nullable();
             $table->float('margin')->nullable();
