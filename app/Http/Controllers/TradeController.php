@@ -80,7 +80,7 @@ class TradeController extends Controller
                 }
                 return back()->withError("Trade Not Found");
             }
-            $this->giveReward($trade);
+            $this->giveReward($trade, true);
 
             if ($request->ajax()) {
                 return response()->json(['success' => 'Trade Stopped Successfully']);
@@ -98,7 +98,7 @@ class TradeController extends Controller
     }
 
 
-    public function giveReward(Trade $trade)
+    public function giveReward(Trade $trade,$force = false)
     {
         $coin = Coin::find($trade->coin_id);
 
@@ -106,7 +106,7 @@ class TradeController extends Controller
 
 
         if ($coin && $user) {
-            if (now()->greaterThanOrEqualTo($trade->ends_at)) {
+            if (now()->greaterThanOrEqualTo($trade->ends_at) || $force) {
 
                 $wallet = $user->wallet($coin->id);
 
