@@ -53,25 +53,6 @@ use App\Models\User;
 
 
 
-Route::get('create-wallets',function(){
-    $users = User::all();
-    $coins = Coin::take(2)->get();
-    foreach($users as $user){
-        foreach($coins as $coin){
-            $wallet = CoinsWallet::where('user_id',$user->id)->where('coin_id',$coin->id)->first();
-            if(!$wallet){
-                $w = new CoinsWallet();
-                $w->user_id = $user->id;
-                $w->coin_id = $coin->id;
-                $w->amount = 0;
-                $w->save();
-                echo "Done";
-            }
-        }
-    }
-});
-
-
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
