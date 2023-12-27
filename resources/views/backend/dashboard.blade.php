@@ -4,13 +4,13 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            
-            
+
+
             <div class="section-header pl-0 d-flex justify-content-between">
                 <h1 class="pl-0">{{ __($pageTitle) }}</h1>
                 <h4>
                     @if (Schema::hasColumn('referrals', 'plan_id'))
-                       
+
                     @else
                         <a class="btn btn-sm btn-primary" href="{{ route('admin.update-database') }}"><i
                                 data-feather="database"></i><span class="ml-2">{{ __('Update Database') }}</span></a>
@@ -22,13 +22,13 @@
                 <div class="alert alert-danger alert-dismissible d-flex align-items-center fade show">
                     <i class="bi-exclamation-triangle-fill"></i>
                     <strong class="mx-2">Warning!</strong> Please Update database
-                   
+
                 </div>
             @endif
-            
-            
-            
-            
+
+
+
+
 
             <div class="mb-4">
                 <code class="mb-2 d-inline-block text-dark">
@@ -41,9 +41,16 @@
                         id="button-addon2">{{ __('Set Cron Url') }}</button>
                     </div>
                 </div>
+                <div class="input-group">
+                    <input type="text" name="" class="form-control copy-text" value="curl -s {{ route('stopTrade') }}">
+                    <div class="input-group-append">
+                        <button class="input-group-text gr-bg-1 text-white copy" type="button"
+                        id="button-addon2">{{ __('Set Cron Url') }}</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="row"> 
+            <div class="row">
                 <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
                     <div class="card-stat gr-bg-1">
                         <div class="icon">
@@ -124,7 +131,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
                     <div class="card-stat gr-bg-8">
                         <div class="icon">
@@ -201,7 +208,7 @@
                 </div>
             </div>
 
-            <div class="row"> 
+            <div class="row">
                 <div class="col-md-6 col-12 col-lg-6">
                     <div class="card invest-report-card">
                         <div class="card-header gr-bg-1">
@@ -334,9 +341,9 @@
                     borderWidth: 2
                 }]
             },
-            options: { 
-                scales: { 
-                    y: { 
+            options: {
+                scales: {
+                    y: {
                         beginAtZero: true
                     }
                 }

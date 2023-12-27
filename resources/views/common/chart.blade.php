@@ -161,17 +161,22 @@
 
                             stockChart{{ $coin->id }}.data.datasets.forEach((dataset) => {
                                 dataset.data.push(data);
-                                if(  current_{{ $coin->name }}_rate > updatedPriceData.price){
+                                if (current_{{ $coin->name }}_rate > updatedPriceData.price) {
                                     stockChart{{ $coin->id }}.data.datasets[0].borderColor = "#FF0000";
 
-                                }else{
+                                } else {
                                     stockChart{{ $coin->id }}.data.datasets[0].borderColor = "#4CAF50";
                                 }
 
                             });
 
+                            $(".prev_{{ $coin->id }}_price").html(current_{{ $coin->name }}_rate +
+                                "{{ @$general->site_currency }}");
                             current_{{ $coin->name }}_rate = updatedPriceData.price;
-                            $(".current_{{ $coin->id }}_rate").html("Current {{ $coin->name }} rate: " + updatedPriceData.price);
+                            $(".current_{{ $coin->id }}_rate").html("Current {{ $coin->name }} rate: " +
+                                updatedPriceData.price);
+                            $(".current_{{ $coin->id }}_price").html(updatedPriceData.price +
+                                "{{ @$general->site_currency }}");
 
                             stockChart{{ $coin->id }}.update();
                         }

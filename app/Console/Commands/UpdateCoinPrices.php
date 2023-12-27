@@ -59,17 +59,18 @@ class UpdateCoinPrices extends Command
 
             // If you want to round to a specific number of decimal places, you can use number_format
             $newPrice = number_format($newPrice, 3);
-            $coin->current_price = $newPrice;
 
-            $currentPrice = $coin->current_price;
+
+
 
 
             // Create Coin Price History
             $history = new PriceHistory();
             $history->coin_id = $coin->id;
-            $history->prev_price = $currentPrice;
+            $history->prev_price = $coin->current_price;;
             $history->current_price = $newPrice;
 
+            $coin->current_price = $newPrice;
             $history->save();
             $coin->save();
 

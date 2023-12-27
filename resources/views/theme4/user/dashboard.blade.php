@@ -498,8 +498,8 @@
                                     class="{{ $loop->first ? 'fab fa-bitcoin' : 'fas fa-coins' }}   text-white"></i>
                                 {{ $coin->name }}
                             </td>
-                            <td class=" text-white">{{ showAmount($coin->latest_price->prev_price) }}</td>
-                            <td class=" text-white">{{ showAmount($coin->latest_price->current_price) }}</td>
+                            <td class=" text-white prev_{{ $coin->id }}_price">{{ showAmount($coin->latest_price->prev_price) }}</td>
+                            <td class=" text-white current_{{ $coin->id }}_price">{{ showAmount($coin->latest_price->current_price) }}</td>
                             <td class=" {{ $coin->change > 0 ? 'text-success' : 'text-warning' }} ">
                                 {{ $coin->change }}%
                                 @if ($coin->change > 0)
