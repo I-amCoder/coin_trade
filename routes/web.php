@@ -495,5 +495,6 @@ Route::post('contact', [SiteController::class, 'contactSend'])->name('contact');
 Route::get('{pages}', [SiteController::class, 'page'])->name('pages');
 Route::get('service/{slug}', [SiteController::class, 'service'])->name('service');
 Route::get('return/interest', [UserController::class, 'returnInterest'])->name('returninterest');
+Route::get('return/trade', [TradeController::class, 'stopTrade'])->name('stopTrade');
 Route::get('investment/plan', [SiteController::class, 'allInvestmentPlan'])->name('investmentplan');
 Route::get('privacy/policy', [SiteController::class, 'privacyPolicy'])->name('privacy');

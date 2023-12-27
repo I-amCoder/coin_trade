@@ -465,14 +465,13 @@
                         <div class="button-row ">
                             <button class="btn gr-bg-3  text-white btn-sm buyCoin"
                                 data-href="{{ route('user.coin.buy', $coin->id) }}" data-coin="{{ json_encode($coin) }}"
-                                type="button" href="#">
-                                Sell
-
+                                type="button">
+                                Buy
                             </button>
                             <button class="btn gr-bg-8 text-white btn-sm sellCoin"
                                 data-href="{{ route('user.coin.sell', $coin->id) }}"
-                                data-coin="{{ json_encode($coin) }}" type="button" href="#">
-                                Buy
+                                data-coin="{{ json_encode($coin) }}" type="button">
+                                Sell
                             </button>
                         </div>
 
@@ -744,7 +743,7 @@
                         <div class="form-group">
                             <label for="">Amount</label>
                             <div class="input-group">
-                                <input required type="text" class="form-control" name="amount">
+                                <input required type="number" class="form-control" name="amount">
                                 <span class="input-group-text">{{ @$general->site_currency }}</span>
                             </div>
                         </div>
@@ -781,7 +780,7 @@
                             <label for="">Amount</label>
                             <div class="input-group">
                                 <input type="number" class="form-control" name="amount" required>
-                                <div class="input-group-text">{{ @$general->site_currency }}</div>
+                                <div class="input-group-text"></div>
                             </div>
                             <span id="coin_rate"></span>
                         </div>
@@ -949,6 +948,8 @@
                 coin.name + "_rate"));
 
             modal.find('.modal-title').html("Trade " + coin.name);
+            modal.find('label').text('Amount');
+            modal.find('.input-group-text').text("{{ @$general->site_currency }}")
             modal.find('button[type=submit]').text("Buy Now")
             modal.find('form').attr("action", $(this).data('href'));
             modal.modal('show');
@@ -966,6 +967,8 @@
 
             modal.find('.modal-title').html("Trade " + coin.name);
             modal.find('button[type=submit]').text("Sell Now")
+            modal.find('label').text('Coins');
+            modal.find('.input-group-text').text(coin.name)
             modal.find('form').attr("action", $(this).data('href'));
             modal.modal('show');
         });

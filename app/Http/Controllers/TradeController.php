@@ -65,7 +65,33 @@ class TradeController extends Controller
         $user->save();
 
         return back()->withSuccess("Coins Purchased Successfully");
+    }
 
+
+    public function sellCoin(Request $request, $id)
+    {
+        $coin = Coin::findOrFail($id);
+        $request->validate([
+            'amount' => 'required|numeric'
+        ]);
+
+
+        $user = User::find(auth()->user()->id);
+        $rate = $coin->current_price;
+        $amount = $request->amount * $rate;
+
+        if ($request->amount > $user->wallet($coin->id)->amount) {
+            return back()->withError(("Insufficient " . $coin->name . " coins"));
+        }
+
+        $wallet = $user->wallet($coin->id);
+        $user->exchange_balance += $amount;
+        $wallet->amount -= $request->amount;
+
+        $wallet->save();
+        $user->save();
+
+        return back()->withSuccess("Coins Sold Successfully");
     }
 
 
@@ -88,10 +114,15 @@ class TradeController extends Controller
             'trade_time' . $coin->id => 'Trade Time',
         ]);
 
+
         // Get Starting Rate
         $current_rate = $coin->current_price;
 
         $user = User::find(auth()->user()->id);
+
+        if ($request->input('trade_amount' . $coin->id) > $user->exchange_balance) {
+            return back()->withErrors('Insufficient Exchange Wallet Balance.');
+        }
 
         $coin_amount = $request->input('trade_amount' . $coin->id) / $current_rate;
 
