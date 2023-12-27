@@ -45,12 +45,24 @@ class UpdateCoinPrices extends Command
 
         foreach ($coins as $coin) {
 
-            $newPrice = rand($coin->minimum_price, $coin->maximum_price);
-            $currentPrice = $coin->current_price;
-            if ($coin->minimum_price < 1 || $coin->maximum_price < 1) {
-                $newPrice =  mt_rand($coin->minimum_price * 100, $coin->maximum_price * 100) / 100;
-            }
+            $minDifference = 0.05; // Set the minimum difference you want
+
+            $basePrice = rand($coin->minimum_price * 100, $coin->maximum_price * 100) / 100;
+
+            // Generate a small random difference within the specified range
+            $priceDifference = rand(-$minDifference * 100, $minDifference * 100) / 100;
+
+            $newPrice = $basePrice + $priceDifference;
+
+            // Make sure the new price stays within the specified range
+            $newPrice = max($coin->minimum_price, min($coin->maximum_price, $newPrice));
+
+            // If you want to round to a specific number of decimal places, you can use number_format
+            $newPrice = number_format($newPrice, 3);
             $coin->current_price = $newPrice;
+
+            $currentPrice = $coin->current_price;
+
 
             // Create Coin Price History
             $history = new PriceHistory();

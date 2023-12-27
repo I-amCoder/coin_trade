@@ -40,13 +40,13 @@ class TradeController extends Controller
 
         $user = User::find(auth()->user()->id);
 
-        $amount = $request->input('trade_amount' . $coin->id) / $current_rate;
+        $coin_amount = $request->input('trade_amount' . $coin->id) / $current_rate;
 
-        $user->exchange_balance -= $amount;
+        $user->exchange_balance -=  $request->input('trade_amount' . $coin->id);
 
         $wallet = $user->wallet($coin->id);
 
-        $wallet->amount += $request->input('trade_amount' . $coin->id);
+        $wallet->amount += $coin_amount;
 
         // Create a trade
         $trade = new Trade();
@@ -116,7 +116,7 @@ class TradeController extends Controller
 
                 $bid = $trade->bid;
 
-                $coin_amount = $bid / $current_rate;
+                $coin_amount = $bid / $starting_rate;
 
                 $difference =   ($bid / $starting_rate) - ($bid / $current_rate);
 
@@ -136,7 +136,7 @@ class TradeController extends Controller
 
                 $wallet->amount -= $coin_amount;
 
-                $user->exchange_balance += $margin;
+                $user->exchange_balance += $difference;
 
                 $wallet->save();
                 $user->save();

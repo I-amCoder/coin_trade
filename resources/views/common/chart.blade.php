@@ -44,7 +44,7 @@
                         label: '{{ $coin->name }} Price',
                         data: data_{{ $coin->id }},
                         borderColor: '#4CAF50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.3)',
+                        backgroundColor: 'rgba(0, 76, 255, 0.464)',
                         borderWidth: 2,
                         fill: true,
                     }]
@@ -157,8 +157,17 @@
                             data = updatedPriceData.price;
                             stockChart{{ $coin->id }}.data.labels.push(label);
 
+
+
                             stockChart{{ $coin->id }}.data.datasets.forEach((dataset) => {
                                 dataset.data.push(data);
+                                if(  current_{{ $coin->name }}_rate > updatedPriceData.price){
+                                    stockChart{{ $coin->id }}.data.datasets[0].borderColor = "#FF0000";
+
+                                }else{
+                                    stockChart{{ $coin->id }}.data.datasets[0].borderColor = "#4CAF50";
+                                }
+
                             });
 
                             current_{{ $coin->name }}_rate = updatedPriceData.price;

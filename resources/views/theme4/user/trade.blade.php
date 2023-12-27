@@ -69,6 +69,9 @@
                             role="tabpanel" aria-labelledby="nav-{{ $coin->id }}-tab">
                             <div class="row mb-4">
                                 <div class="col-12">
+                                    <h5>{{ $coin->name }} Balance: {{ auth()->user()->wallet($coin->id)->amount ?? 0 }}
+                                    </h5>
+                                    <h5>Exchange Balance: {{ showAmount(auth()->user()->exchange_balance) }}</h5>
                                     @include('common.chart', ['coin' => $coin])
                                 </div>
                                 <div class="col-12 text-center">
