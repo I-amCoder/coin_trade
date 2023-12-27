@@ -105,7 +105,16 @@ class User extends Authenticatable
 
     public function wallet($id)
     {
-        return $this->coins()->find($id);
+        $wallet = CoinsWallet::where(['user_id' => $this->id, 'coin_id' => $id])->first();
+        if (!$wallet) {
+            $wallet = new CoinsWallet();
+            $wallet->user_id = $this->id;
+            $wallet->coin_id = $id;
+            $wallet->amount = 0;
+            $wallet->save();
+        }
+
+        return $wallet;
     }
 
     public function coins()

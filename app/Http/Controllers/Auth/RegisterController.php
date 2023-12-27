@@ -59,13 +59,15 @@ class RegisterController extends Controller
         if ($request->reffered_by) {
             $referUser = User::where('username', $request->reffered_by)->first();
 
-            $referid = $referUser->id;
+
 
             if (!$referUser) {
                 $notify[] = ['error', 'No User Found Assocciated with this reffer Name'];
 
                 return redirect()->route('user.register')->withNotify($notify);
             }
+
+            $referid = $referUser->id;
         }
 
         event(new Registered($user = $this->create($request, $signupBonus, $referid)));
